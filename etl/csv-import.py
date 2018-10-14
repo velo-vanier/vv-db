@@ -1,5 +1,7 @@
 import openpyxl
 import pymysql
+
+import sys
 import logging
 
 logger = logging.getLogger()
@@ -33,7 +35,7 @@ def addPhoto(bikeLabel, photoLink):
             row = cur.fetchone()
             if not row:
                 print("insert new photo")
-                cur.excute("INSERT INTO `BikeShare`.`Photo` (`url`) VALUES '{}');".format(photoLink))
+                cur.excute("INSERT INTO `BikeShare`.`Photo` (`url`) VALUES ('{}');".format(photoLink))
                 conn.commit()
                 idPhoto = conn.insert_id()
             else:
@@ -43,12 +45,15 @@ def addPhoto(bikeLabel, photoLink):
             # check that bike/photo doesn't exist
             # unique constraint is there for now
 
-            logger.info("insert new bike/photo (ID_Bike: {}, ID_Photo: {})".format(idBike, idPhoto))
-            sql = "INSERT INTO `BikeShare`.`BikePhoto` (ID_Bike, ID_Photo) VALUES ({}, {});".format(idBike, idPhoto)
-            cur.excute(sql)
-            conn.commit()
+            try:
+                logger.info("insert new bike/photo (ID_Bike: {}, ID_Photo: {})".format(idBike, idPhoto))
+                sql = "INSERT INTO `BikeShare`.`BikePhoto` (ID_Bike, ID_Photo) VALUES ({}, {});".format(idBike, idPhoto)
+                cur.execute(sql)
+                conn.commit()
+            except Exception as e:
+                print(e)
 
-wb = openpyxl.load_workbook('/home/rob/rhok/velo-vanier/Velo-Vanier Operations Log.xlsx')
+wb = openpyxl.load_workbook('/home/rob/rhok/velo-vanier/vv-db/data/xlsx/Velo-Vanier Operations Log.xlsx')
 ws = wb.get_sheet_by_name('CalculateStatus')
 
 print(ws.cell(row=3, column=1).hyperlink.target)
