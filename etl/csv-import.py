@@ -12,7 +12,7 @@ name = 'BikeShareMaster'
 password = 'MasterBikeShare2018'
 db_name = 'BikeShare'
 
-logger.info(host, name, password, db_name)
+print(host, name, password, db_name)
 
 def addPhoto(bikeLabel, photoLink):
     conn = pymysql.connect(host, user=name, passwd=password, db=db_name, connect_timeout=5)
@@ -21,17 +21,17 @@ def addPhoto(bikeLabel, photoLink):
         
         # make sure this bike exists, it doesn't do ignore
         sql = 'select ID_Bike from Bike where BikeLabel = "{}"'.format(bikeLabel)
-        logger.info(sql)
+        print(sql)
 
         cur.execute(sql)
         row = cur.fetchone()
         if row:
             idBike = row[0]
-            logger.info("bike exists - bikeLabel: {}".format(idBike))
+            print("bike exists - bikeLabel: {}".format(idBike))
 
             # check if photo exists
             cur.execute("select ID_Photo from Photo where url = '{}'".format(photoLink))
-            logger.info(sql)
+            print(sql)
             row = cur.fetchone()
             if not row:
                 print("insert new photo")
@@ -46,7 +46,7 @@ def addPhoto(bikeLabel, photoLink):
             # unique constraint is there for now
 
             try:
-                logger.info("insert new bike/photo (ID_Bike: {}, ID_Photo: {})".format(idBike, idPhoto))
+                print("insert new bike/photo (ID_Bike: {}, ID_Photo: {})".format(idBike, idPhoto))
                 sql = "INSERT INTO `BikeShare`.`BikePhoto` (ID_Bike, ID_Photo) VALUES ({}, {});".format(idBike, idPhoto)
                 cur.execute(sql)
                 conn.commit()
