@@ -67,11 +67,11 @@ def addPhoto(bikeLabel, photoLink):
         else:
             print('unknown bikeLabel: {}'.format(bikeLabel))
 
-path = '/home/rob/rhok/velo-vanier/vv-db/data/csv/BikePhotos.csv'
+path = '/home/rob/rhok/velo-vanier/vv-db/data/csv/BikePhotos_2.csv'
 baseUrl = 'https://s3.amazonaws.com/velo-vanier/images/bikeImages/'
 with open(path) as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
-    next(csv_reader)
+    #next(csv_reader)
     for row in csv_reader:
         bikeLabel = row[0]
         fileName = str = re.sub('[ ]','+',row[1])
