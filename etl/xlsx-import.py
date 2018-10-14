@@ -1,20 +1,8 @@
-import csv
-from urllib.parse import urljoin
+import openpyxl
 import pymysql
 
-import re
 import sys
 import logging
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-host  = 'bikesharemysql.cwf839dt8hxr.us-east-2.rds.amazonaws.com'
-name = 'BikeShareMaster'
-password = 'MasterBikeShare2018'
-db_name = 'BikeShare'
-
-print(host, name, password, db_name)
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -64,18 +52,27 @@ def addPhoto(bikeLabel, photoLink):
                 conn.commit()
             except Exception as e:
                 print(e)
-        else:
-            print('unknown bikeLabel: {}'.format(bikeLabel))
 
-path = '/home/rob/rhok/velo-vanier/vv-db/data/csv/BikePhotos.csv'
-baseUrl = 'https://s3.amazonaws.com/velo-vanier/images/bikeImages/'
-with open(path) as csv_file:
-    csv_reader = csv.reader(csv_file, delimiter=',')
-    next(csv_reader)
-    for row in csv_reader:
-        bikeLabel = row[0]
-        fileName = str = re.sub('[ ]','+',row[1])
-        fullUrl = urljoin(baseUrl, fileName)
-        print(fullUrl)
+wb = openpyxl.load_workbook('/home/rob/rhok/velo-vanier/vv-db/data/xlsx/Velo-Vanier Operations Log.xlsx')
+ws = wb.get_sheet_by_name('CalculateStatus')
 
-        addPhoto(bikeLabel, fullUrl)
+print(ws.cell(row=3, column=1).hyperlink.target)
+maxRow=ws.max_row
+maxColumn=ws.max_column
+
+print(maxRow,maxColumn)
+
+for i in range(1, maxRow + 1):
+    try:
+        cell = ws.cell(row=i, column=1)
+
+        bikeLabel = cell.value
+        bikeLink = cell.hyperlink.target    
+
+        print(bikeLabel)
+        print(bikeLink)     
+
+        addPhoto(bikeLabel, bikeLink)
+
+    except Exception as e:
+        print(e)
